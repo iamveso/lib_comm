@@ -11,6 +11,7 @@ pub trait Identity{
 mod tests {
     use rusb::{DeviceHandle, Context};
     use crate::usb;
+    use crate::usb::find_connected_devices;
 
     #[test]
     fn it_works() {
