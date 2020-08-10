@@ -19,7 +19,8 @@ fn get_device_handle(list: DeviceList<Context>) -> Result<DeviceHandle<Context>,
     for device in list.iter(){
         let handle = device.open()?;
         //TODO:Get interface number dynamically
-        if handle.kernel_driver_active(0)?{
+        let attached = handle.kernel_driver_active(0)?;
+        if !attached{
             return Ok(handle)
         }
     }
