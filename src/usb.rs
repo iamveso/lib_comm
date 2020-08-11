@@ -59,3 +59,9 @@ fn get_product_id(device_handle: &DeviceHandle<Context>) -> Result<u16,rusb::Err
     let desc = get_descriptor(device_handle)?;
     Ok(desc.product_id())
 }
+
+fn get_descriptor(device_handle: &DeviceHandle<Context>) -> Result<DeviceDescriptor,rusb::Error>{
+    let device = device_handle.device();
+    let descriptor = device.device_descriptor()?;
+    Ok(descriptor)
+}

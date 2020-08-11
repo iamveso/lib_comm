@@ -9,9 +9,7 @@ pub trait Identity{
 
 #[cfg(test)]
 mod tests {
-    use rusb::{DeviceHandle, Context};
-    use crate::usb;
-    use crate::usb::find_connected_devices;
+    use super::*;
 
     #[test]
     fn it_works() {
@@ -19,5 +17,7 @@ mod tests {
     }
 
     //TODO:Run test for can find devices
-
+    fn can_find_devices() -> bool{
+        unimplemented!()
+    }
 }
