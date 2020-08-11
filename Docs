@@ -1,0 +1,13 @@
+#Tests Carried out
+
+1. Can Find Connected Devices
+
+
+
+
+#Thought process
+1.Create a usb struct that contains all the important parts of the device's identity
+    The struct should contain
+    1. VendorID and ProductID
+    2. Handle of Device
+    3. endpoints (In and Out)
