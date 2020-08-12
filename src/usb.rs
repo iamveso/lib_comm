@@ -5,11 +5,6 @@ use rusb::{Context, DeviceHandle, DeviceList, DeviceDescriptor};
 use std::time::Duration;
 use std::thread::sleep;
 
-enum UsbType{
-    Accessory,
-    Other,
-}
-
 const ACCESSORY_VENDOR_ID :u16 = 0x18D1;
 const ACCESSORY_PRODUCT_ID :(u16,u16) = (0x2D00,0x2D01);
 
@@ -33,7 +28,9 @@ impl UsbDeviceIdentity{
     pub fn get_product_id(&self) -> u16{
         self.product_id
     }
-    pub fn send_data(&self, data: &str) -> bool{unimplemented!()}
+    pub fn send_data(&self, data: &str) -> bool{
+        unimplemented!()
+    }
     pub fn receive_data(&self) -> String{unimplemented!()}
     pub fn is_in_accessory_mode(&self) -> bool{
         if self.vendor_id == ACCESSORY_VENDOR_ID &&

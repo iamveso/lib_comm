@@ -26,12 +26,12 @@ mod tests {
     #[test]
     fn can_switch_device_to_accessory_mode(){
         let data = (
-            String::from("Softcom"),
-            String::from("Moonshot"),
-            String::from("442 Biometric Scanner"),
-            String::from("1"),
-            String::from("https://www.softcom.ng"),
-            String::from("0123456789"),
+            String::from("A"),
+            String::from("B"),
+            String::from("C"),
+            String::from("D"),
+            String::from("E"),
+            String::from("F"),
             );
         let device = usb::UsbDeviceIdentity::new();
         let device = match device {
