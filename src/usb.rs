@@ -1,15 +1,9 @@
 #![allow(dead_code)]
-
-
 use rusb::{Context, DeviceHandle, DeviceList, DeviceDescriptor};
 use std::time::Duration;
 use std::thread::sleep;
 
-enum UsbType{
-    Accessory,
-    Other,
-}
-
+mod data;
 const ACCESSORY_VENDOR_ID :u16 = 0x18D1;
 const ACCESSORY_PRODUCT_ID :(u16,u16) = (0x2D00,0x2D01);
 
@@ -33,8 +27,7 @@ impl UsbDeviceIdentity{
     pub fn get_product_id(&self) -> u16{
         self.product_id
     }
-    pub fn send_data(&self, data: &str) -> bool{unimplemented!()}
-    pub fn receive_data(&self) -> String{unimplemented!()}
+    pub fn get_device_handle(&self) -> &DeviceHandle<Context>{&self.handle}
     pub fn is_in_accessory_mode(&self) -> bool{
         if self.vendor_id == ACCESSORY_VENDOR_ID &&
             (self.product_id == ACCESSORY_PRODUCT_ID.0 ||
@@ -42,6 +35,32 @@ impl UsbDeviceIdentity{
             return true;
         }
         false
+    }
+    pub fn create_message() -> String{
+        let a = String::from("start");
+        let b = String::new();
+        let output = data::OutData::new(a);
+        let output = serde_json::to_string(&output).unwrap();
+        println!("{}", output);
+        output
+    }
+    pub fn send_data(&self, data: &str) -> bool{
+        let timeout = Duration::new(0,0);
+        let output = self.handle.write_bulk(0x01,data.as_bytes(),timeout);
+        return match output{
+            Ok(_) => true,
+            Err(_) => false,
+        }
+    }
+    pub fn receive_data(&self) -> Result<String,rusb::Error>{
+        let timeout = Duration::new(0,0);
+        let data = r#"
+        action:"",args:
+        "#;
+        let mut data = data.to_string();
+        let m = unsafe{data.as_bytes_mut()};
+        let _ = self.handle.read_bulk(0x81,m,timeout)?;
+        Ok(data)
     }
 }
 
@@ -70,7 +89,6 @@ fn create_device_identity() -> Result<UsbDeviceIdentity,rusb::Error>{
     Ok(device_identity)
 }
 
-///Returns a Result<> of device handle on success
 fn find_connected_devices() -> Result<DeviceHandle<Context>, rusb::Error>{
     let context = Context::new()?;
     let list = DeviceList::new_with_context(context)?;
@@ -120,7 +138,7 @@ fn is_protocol_version_supported(version: usize) -> bool{
     true
 }
 
-pub fn switch_to_accessory_mode(device: &UsbDeviceIdentity, control_strings: &(String,String,String,String,String,String)) -> Result<(),rusb::Error>{
+pub fn switch_to_accessory_mode(device: &UsbDeviceIdentity, control_strings: &(&str,&str,&str,&str,&str,&str)) -> Result<(),rusb::Error>{
     let timeout = Duration::new(0,0);
     let sleep_time = Duration::new(1,500000);
     let a = get_protocol_version(&device.handle)?;
@@ -137,5 +155,4 @@ pub fn switch_to_accessory_mode(device: &UsbDeviceIdentity, control_strings: &(S
     device.handle.write_control(0x40,53,0,0,String::new().as_bytes(),timeout)?;
     sleep(sleep_time);
     Ok(())
-
 }
